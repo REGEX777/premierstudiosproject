@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import express from 'express';
 import axios from 'axios'
-
+import City from '../models/favoriteCity.js';
 const router = express.Router()
 
 function calculateAQI(airQuality) {
@@ -100,7 +100,7 @@ router.get('/', async (req, res) => {
         const data = response.data;
         const airQuality = data.current.air_quality;
         const aqi = calculateAQI(airQuality);
-        console.log(data)
+        const cities = await City.find();
         const forecast = data.forecast.forecastday.map((day, index) => {
             const dateObj = new Date(day.date);
             const options = { weekday: 'short', month: 'short', day: 'numeric' };
@@ -149,7 +149,7 @@ router.get('/', async (req, res) => {
             uv: data.current.uv
           };
         console.log(weather.weather[0].icon)
-        res.render('index', { weather, forecast });
+        res.render('index', { weather, forecast, favorites:cities });
     } catch (error) {
         console.error('WeatherAPI error:', error.response?.data || error.message);
         res.render('index', { weather: null, error: `Could not fetch weather for "${city}".` });

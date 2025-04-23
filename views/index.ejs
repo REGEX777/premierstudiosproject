@@ -213,67 +213,30 @@
             </button>
           </form>
           <ul class="favorites-list mb-6 list-none">
-            <li class="favorite-item flex items-center justify-between border-b border-gray-200 py-4 transition-all duration-200 last:border-0 hover:bg-gray-50">
-              <div class="favorite-info flex flex-col gap-1">
-                <span class="favorite-name font-medium">London, UK</span>
-                <span class="favorite-desc text-xs text-gray-600">Partly Cloudy</span>
-              </div>
-              <span class="favorite-temp text-primary text-lg font-semibold">58°</span>
-              <div class="favorite-actions flex gap-2">
-                <button class="hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:text-white" title="View">
-                  <i class="fas fa-eye"></i>
-                </button>
-                <button class="hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:text-white" title="Remove">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </li>
-            <li class="favorite-item flex items-center justify-between border-b border-gray-200 py-4 transition-all duration-200 last:border-0 hover:bg-gray-50">
-              <div class="favorite-info flex flex-col gap-1">
-                <span class="favorite-name font-medium">Tokyo, JP</span>
-                <span class="favorite-desc text-xs text-gray-600">Light Rain</span>
-              </div>
-              <span class="favorite-temp text-primary text-lg font-semibold">64°</span>
-              <div class="favorite-actions flex gap-2">
-                <button class="hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:text-white" title="View">
-                  <i class="fas fa-eye"></i>
-                </button>
-                <button class="hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:text-white" title="Remove">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </li>
-            <li class="favorite-item flex items-center justify-between border-b border-gray-200 py-4 transition-all duration-200 last:border-0 hover:bg-gray-50">
-              <div class="favorite-info flex flex-col gap-1">
-                <span class="favorite-name font-medium">Paris, FR</span>
-                <span class="favorite-desc text-xs text-gray-600">Sunny</span>
-              </div>
-              <span class="favorite-temp text-primary text-lg font-semibold">68°</span>
-              <div class="favorite-actions flex gap-2">
-                <button class="hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:text-white" title="View">
-                  <i class="fas fa-eye"></i>
-                </button>
-                <button class="hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:text-white" title="Remove">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </li>
-            <li class="favorite-item flex items-center justify-between border-b border-gray-200 py-4 transition-all duration-200 last:border-0 hover:bg-gray-50">
-              <div class="favorite-info flex flex-col gap-1">
-                <span class="favorite-name font-medium">Sydney, AU</span>
-                <span class="favorite-desc text-xs text-gray-600">Clear</span>
-              </div>
-              <span class="favorite-temp text-primary text-lg font-semibold">72°</span>
-              <div class="favorite-actions flex gap-2">
-                <button class="hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:text-white" title="View">
-                  <i class="fas fa-eye"></i>
-                </button>
-                <button class="hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:text-white" title="Remove">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </li>
+            <% if (favorites.length > 0) { %>
+              <% favorites.forEach(city => { %>
+                <li class="favorite-item flex items-center justify-between border-b border-gray-200 py-4 transition-all duration-200 last:border-0 hover:bg-gray-50">
+                  <div class="favorite-info flex flex-col gap-1">
+                    <span class="favorite-name font-medium"><%= city.name %></span>
+                  </div>
+                  <div class="favorite-actions flex gap-2">
+                    <form action="/api/delete/fav?_method=DELETE" method="POST">
+                      <input type="text" value="<%= city._id %>" name="id" hidden>
+                      <button class="hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:text-white" title="Remove">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </form>
+                  </div>
+                </li>
+              <% }) %>
+            <% } else { %>
+              <li class="text-gray-500 italic py-4 text-center">No favorite cities yet.</li>
+            <% } %>
           </ul>
+          <div class="flex items-center justify-center">
+            <a href="/favorites">View Your Favorites</a>
+          </div>
+
         </aside>
       </main>
     </div>
