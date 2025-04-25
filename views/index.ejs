@@ -1,67 +1,49 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather App</title>
-    <link rel="stylesheet" href="output.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <script>
-      tailwind.config = {
-          theme: {
-              extend: {
-                  colors: {
-                      primary: '#4361ee',
-                      secondary: '#3f37c9',
-                      accent: '#4895ef',
-                      success: '#4cc9f0',
-                      warning: '#f72585',
-                  },
-                  borderRadius: {
-                      custom: '12px',
-                  },
-                  boxShadow: {
-                      custom: '0 4px 20px rgba(0, 0, 0, 0.1)',
-                  },
-                  fontFamily: {
-                      inter: ['Inter', 'sans-serif'],
-                  },
-              }
-          }
-      }
-    </script>
-  </head>
-  <body class="font-inter min-h-screen bg-gradient-to-br from-[#f5f7fa] to-[#c3cfe2] text-gray-900">
-    <!-- nav -->
-    <div class="container mx-auto max-w-[1400px] px-8 py-8">
-      <header class="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <div class="logo text-primary flex items-center gap-2 text-2xl font-bold">
-          <i class="fas fa-cloud-sun-rain text-3xl"></i>
-          <span>Weather App</span>
-        </div>
-        <div class="search-container relative w-full max-w-[500px] min-w-[250px]">
-          <i class="fas fa-search search-icon text-primary absolute top-1/2 left-4 -translate-y-1/2"></i>
-          <input
-            id="searchInput"
-            type="text"
-            class="search-input rounded-custom shadow-custom w-full border-2 rounded-lg py-3 pr-4 pl-12 text-base transition-all duration-300 focus:shadow-[0_4px_20px_rgba(67,97,238,0.3)] focus:outline-none"
-            placeholder="Search for a city or location..."
-            autocomplete="off"
-          />
-        
-          <ul id="suggestions" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md mt-2 z-10 shadow-lg max-h-60 overflow-y-auto hidden">
-          </ul>
-        </div>
-      </header>
-      <!-- main body -->
-      <main class="main-content grid grid-cols-1 gap-8 lg:grid-cols-[1fr_350px]">
-        <section class="weather-display rounded-custom shadow-custom bg-white p-8 rounded-lg">
-          <div class="current-weather mb-12 flex flex-col items-center">
-            <div class="location-info mb-4 text-center">
-              <h1 class="location-name mb-1 text-3xl font-bold"><%= weather.name %>, <%= weather.country %></h1>
-              <div class="location-details text-gray-600">
-                Last updated at:
-                <%= new Date(weather.localtime).toLocaleString('en-US', {
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather App</title>
+  <link rel="stylesheet" href="output.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/82eb69e53c.js" crossorigin="anonymous"></script>
+
+  <style>
+    .autocomplete-dropdown {
+      scrollbar-width: thin;
+      scrollbar-color: #c1c1c1 #f1f1f1;
+    }
+
+    .autocomplete-dropdown::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .autocomplete-dropdown::-webkit-scrollbar-thumb {
+      background-color: #c1c1c1;
+      border-radius: 4px;
+    }
+
+    .autocomplete-dropdown::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body class="font-inter min-h-screen bg-gradient-to-br from-[#f5f7fa] to-[#c3cfe2] text-gray-900">
+  <!-- nav -->
+  <div class="container mx-auto max-w-[1400px] px-8 py-8">
+    <%- include('partials/navbar', { showSearch: true }) %>
+    <!-- main body -->
+    <main class="main-content grid grid-cols-1 gap-8 lg:grid-cols-[1fr_350px]">
+      <section class="weather-display rounded-custom shadow-custom bg-white p-8 rounded-lg">
+        <div class="current-weather mb-12 flex flex-col items-center">
+          <div class="location-info mb-4 text-center">
+            <h1 class="location-name mb-1 text-3xl font-bold"><%= weather.name %>, <%= weather.country %></h1>
+            <div class="location-details text-gray-600">
+              Last updated at:
+              <%= new Date(weather.localtime).toLocaleString('en-US', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -71,295 +53,296 @@
                   hour12: true,
                   timeZone: weather.timezone
                 }) %>
-              </div>
-            </div>
-          
-            <img
-              src="https://cdn.weatherapi.com/weather/64x64/day/<%= weather.weather[0].icon %>.png"
-              alt="Weather icon"
-              class="my-4 h-24 w-24"
-            />
-          
-            <div class="temperature mb-2 flex items-start text-6xl font-semibold">
-              <%= Math.round(weather.main.temp) %><span class="mt-2 text-4xl">°C</span>
-            </div>
-          
-            <div class="weather-description mb-6 text-2xl text-gray-600 capitalize">
-              <%= weather.weather[0].description %>
-            </div>
-          
-            <div class="weather-details mb-12 grid w-full grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-5">
-              <div class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
-                <i class="fas fa-tint text-primary mb-3 text-2xl"></i>
-                <div class="detail-value mb-1 text-xl font-semibold"><%= weather.main.humidity %>%</div>
-                <div class="detail-label text-sm text-gray-600">Humidity</div>
-              </div>
-          
-              <div class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
-                <i class="fas fa-wind text-primary mb-3 text-2xl"></i>
-                <div class="detail-value mb-1 text-xl font-semibold"><%= Math.round(weather.wind.speed, 2) %> m/s</div>
-                <div class="detail-label text-sm text-gray-600">Wind Speed</div>
-              </div>
-          
-              <div class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
-                <i class="fas fa-compress-arrows-alt text-primary mb-3 text-2xl"></i>
-                <div class="detail-value mb-1 text-xl font-semibold"><%= weather.main.pressure %> hPa</div>
-                <div class="detail-label text-sm text-gray-600">Pressure</div>
-              </div>
-          
-              <div class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
-                <i class="fas fa-eye text-primary mb-3 text-2xl"></i>
-                <div class="detail-value mb-1 text-xl font-semibold"><%= (weather.visibility / 1000).toFixed(1) %> km</div>
-                <div class="detail-label text-sm text-gray-600">Visibility</div>
-              </div>
-          
-              <div class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
-                <i class="fas fa-cloud-rain text-primary mb-3 text-2xl"></i>
-                <div class="detail-value mb-1 text-xl font-semibold">
-                  <%= weather.rain && weather.rain["1h"] ? `${weather.rain["1h"]} mm` : '0 mm' %>
-                </div>
-                <div class="detail-label text-sm text-gray-600">Precipitation</div>
-              </div>
-            </div>
-          </div>
-          
-
-          <div class="additional-metrics mt-12">
-            <h3 class="section-title mb-6 flex items-center gap-3 text-2xl font-semibold">
-              <i class="fas fa-chart-line text-primary"></i>
-              Additional Metrics
-            </h3>
-            <div class="metrics-grid grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          
-              <div class="metric-card rounded-custom hover:shadow-custom bg-gray-50 p-6 transition-all duration-300 hover:-translate-y-1">
-                <div class="metric-title mb-2 text-sm text-gray-600">Feels Like</div>
-                <div class="metric-value text-xl font-semibold">
-                  <%= Math.round(weather.main.feels_like) %><span class="ml-1 text-sm text-gray-600">°C</span>
-                </div>
-              </div>
-          
-              <div class="metric-card rounded-custom hover:shadow-custom bg-gray-50 p-6 transition-all duration-300 hover:-translate-y-1">
-                <div class="metric-title mb-2 text-sm text-gray-600">Dew Point</div>
-                <div class="metric-value text-xl font-semibold">
-                  <%= weather.main.dew_point || "—" %><span class="ml-1 text-sm text-gray-600">°C</span>
-                </div>
-              </div>
-          
-              <div class="metric-card rounded-custom hover:shadow-custom bg-gray-50 p-6 transition-all duration-300 hover:-translate-y-1">
-                <div class="metric-title mb-2 text-sm text-gray-600">UV Index</div>
-                <div class="metric-value text-xl font-semibold">
-                  <%= weather.uv %><span class="ml-1 text-sm text-gray-600">of 10</span>
-                </div>
-              </div>
-          
-              <div class="metric-card rounded-custom hover:shadow-custom bg-gray-50 p-6 transition-all duration-300 hover:-translate-y-1">
-                <div class="metric-title mb-2 text-sm text-gray-600">Air Quality Index: <%= Math.round(weather.aqi) %> </div>
-                <div class="sun-times mt-4 flex justify-between">
-                  <div class="sun-time flex flex-col items-center">
-                    <i class="fas fa-sun mb-2 text-xl text-yellow-400"></i>
-                    <div class="time-value font-semibold">
-                      <%= weather.sys.sunrise %>
-                    </div>
-                    <div class="time-label text-xs text-gray-600">Sunrise</div>
-                  </div>
-          
-                  <div class="sun-time flex flex-col items-center">
-                    <i class="fas fa-moon mb-2 text-xl text-yellow-400"></i>
-                    <div class="time-value font-semibold">
-                      <%= weather.sys.sunset %>
-                    </div>
-                    <div class="time-label text-xs text-gray-600">Sunset</div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
-          <div class="weekly-forecast mt-12">
-            <h3 class="section-title mb-6 flex items-center gap-3 text-2xl font-semibold">
-              <i class="fas fa-calendar-week text-primary"></i>
-              7-Day Forecast
-            </h3>
-            <div class="forecast-container grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
-              <% forecast.forEach(day => { %>
-                <div class="forecast-day rounded-custom hover:shadow-custom cursor-pointer bg-gray-50 p-6 text-center transition-all duration-300 hover:bg-white">
-                  <div class="day-name mb-2 font-semibold"><%= day.dayName %></div>
-                  <div class="day-date mb-3 text-sm text-gray-600"><%= day.date %></div>
-                  <img src="https://cdn.weatherapi.com/weather/64x64/day/<%= day.icon %>.png" class="mx-auto my-2 h-12 w-12" alt="weather icon">
-                  <div class="day-temp flex justify-center gap-2">
-                    <span class="day-high text-warning font-semibold"><%= day.maxTemp %>°</span>
-                    <span class="day-low text-success font-semibold"><%= day.minTemp %>°</span>
-                  </div>
-                </div>
-              <% }) %>
+          <img src="https://cdn.weatherapi.com/weather/64x64/day/<%= weather.weather[0].icon %>.png" alt="Weather icon"
+            class="my-4 h-24 w-24" />
+
+          <div class="temperature mb-2 flex items-start text-6xl font-semibold">
+            <%= Math.round(weather.main.temp) %><span class="mt-2 text-4xl">°C</span>
+          </div>
+
+          <div class="weather-description mb-6 text-2xl text-gray-600 capitalize">
+            <%= weather.weather[0].description %>
+          </div>
+
+          <div class="weather-details mb-12 grid w-full grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-5">
+            <div
+              class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
+              <i class="fas fa-tint text-primary mb-3 text-2xl"></i>
+              <div class="detail-value mb-1 text-xl font-semibold"><%= weather.main.humidity %>%</div>
+              <div class="detail-label text-sm text-gray-600">Humidity</div>
+            </div>
+
+            <div
+              class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
+              <i class="fas fa-wind text-primary mb-3 text-2xl"></i>
+              <div class="detail-value mb-1 text-xl font-semibold"><%= Math.round(weather.wind.speed, 2) %> m/s</div>
+              <div class="detail-label text-sm text-gray-600">Wind Speed</div>
+            </div>
+
+            <div
+              class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
+              <i class="fas fa-compress-arrows-alt text-primary mb-3 text-2xl"></i>
+              <div class="detail-value mb-1 text-xl font-semibold"><%= weather.main.pressure %> hPa</div>
+              <div class="detail-label text-sm text-gray-600">Pressure</div>
+            </div>
+
+            <div
+              class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
+              <i class="fas fa-eye text-primary mb-3 text-2xl"></i>
+              <div class="detail-value mb-1 text-xl font-semibold"><%= (weather.visibility / 1000).toFixed(1) %> km
+              </div>
+              <div class="detail-label text-sm text-gray-600">Visibility</div>
+            </div>
+
+            <div
+              class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
+              <i class="fas fa-cloud-rain text-primary mb-3 text-2xl"></i>
+              <div class="detail-value mb-1 text-xl font-semibold">
+                <%= weather.rain && weather.rain["1h"] ? `${weather.rain["1h"]} mm` : '0 mm' %>
+              </div>
+              <div class="detail-label text-sm text-gray-600">Precipitation</div>
             </div>
           </div>
-        </section>
-        <!-- sidebar -->
-        <aside class="favorites-sidebar rounded-custom shadow-custom sticky top-8 h-fit bg-white p-6 rounded-lg">
+        </div>
+
+
+        <div class="additional-metrics mt-12">
           <h3 class="section-title mb-6 flex items-center gap-3 text-2xl font-semibold">
-            <i class="fas fa-heart text-primary"></i>
-            Favorite Locations
+            <i class="fas fa-chart-line text-primary"></i>
+            Additional Metrics
           </h3>
-          <form action="/api/add/fav" method="post">
-            <input type="text" value="<%= weather.name %>" name="cityName" hidden>
-            <input type="text" value="<%= weather.coords.lat %>" name="lat" hidden>
-            <input type="text" value="<%= weather.coords.lon %>" name="long" hidden>
-            <button 
-            class="bg-primary hover:bg-secondary border cursor-pointer border-gray-300 text-black px-6 py-3 font-medium gap-2 transition-all duration-200 hover:shadow-md whitespace-nowrap rounded-lg w-full flex items-center justify-center"
-            >
+          <div class="metrics-grid grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+            <div
+              class="metric-card rounded-custom hover:shadow-custom bg-gray-50 p-6 transition-all duration-300 hover:-translate-y-1">
+              <div class="metric-title mb-2 text-sm text-gray-600">Feels Like</div>
+              <div class="metric-value text-xl font-semibold">
+                <%= Math.round(weather.main.feels_like) %><span class="ml-1 text-sm text-gray-600">°C</span>
+              </div>
+            </div>
+
+            <div
+              class="metric-card rounded-custom hover:shadow-custom bg-gray-50 p-6 transition-all duration-300 hover:-translate-y-1">
+              <div class="metric-title mb-2 text-sm text-gray-600">Dew Point</div>
+              <div class="metric-value text-xl font-semibold">
+                <%= weather.main.dew_point || "—" %><span class="ml-1 text-sm text-gray-600">°C</span>
+              </div>
+            </div>
+
+            <div
+              class="metric-card rounded-custom hover:shadow-custom bg-gray-50 p-6 transition-all duration-300 hover:-translate-y-1">
+              <div class="metric-title mb-2 text-sm text-gray-600">UV Index</div>
+              <div class="metric-value text-xl font-semibold">
+                <%= weather.uv %><span class="ml-1 text-sm text-gray-600">of 10</span>
+              </div>
+            </div>
+
+            <div
+              class="metric-card rounded-custom hover:shadow-custom bg-gray-50 p-6 transition-all duration-300 hover:-translate-y-1">
+              <div class="metric-title mb-2 text-sm text-gray-600">Air Quality Index: <%= Math.round(weather.aqi) %>
+              </div>
+              <div class="sun-times mt-4 flex justify-between">
+                <div class="sun-time flex flex-col items-center">
+                  <i class="fas fa-sun mb-2 text-xl text-yellow-400"></i>
+                  <div class="time-value font-semibold">
+                    <%= weather.sys.sunrise %>
+                  </div>
+                  <div class="time-label text-xs text-gray-600">Sunrise</div>
+                </div>
+
+                <div class="sun-time flex flex-col items-center">
+                  <i class="fas fa-moon mb-2 text-xl text-yellow-400"></i>
+                  <div class="time-value font-semibold">
+                    <%= weather.sys.sunset %>
+                  </div>
+                  <div class="time-label text-xs text-gray-600">Sunset</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="weekly-forecast mt-12">
+          <h3 class="section-title mb-6 flex items-center gap-3 text-2xl font-semibold">
+            <i class="fas fa-calendar-week text-primary"></i>
+            7-Day Forecast
+          </h3>
+          <div class="forecast-container grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
+            <% forecast.forEach(day => { %>
+            <div
+              class="forecast-day rounded-custom hover:shadow-custom cursor-pointer bg-gray-50 p-6 text-center transition-all duration-300 hover:bg-white">
+              <div class="day-name mb-2 font-semibold"><%= day.dayName %></div>
+              <div class="day-date mb-3 text-sm text-gray-600"><%= day.date %></div>
+              <img src="https://cdn.weatherapi.com/weather/64x64/day/<%= day.icon %>.png" class="mx-auto my-2 h-12 w-12"
+                alt="weather icon">
+              <div class="day-temp flex justify-center gap-2">
+                <span class="day-high text-warning font-semibold"><%= day.maxTemp %>°</span>
+                <span class="day-low text-success font-semibold"><%= day.minTemp %>°</span>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+      </section>
+      <!-- sidebar -->
+      <aside class="favorites-sidebar rounded-custom shadow-custom sticky top-8 h-fit bg-white p-6 rounded-lg">
+        <h3 class="section-title mb-6 flex items-center gap-3 text-2xl font-semibold">
+          <i class="fas fa-heart text-primary text-red-500"></i>
+          Favorite Locations
+        </h3>
+        <% const alreadyFavorite = favorites.some(fav => fav.name.toLowerCase() === weather.name.toLowerCase()); %>
+        <% if (!alreadyFavorite) { %>
+        <form action="/api/add/fav" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="text" value="<%= weather.name %>" name="cityName" hidden>
+          <input type="text" value="<%= weather.coords.lat %>" name="lat" hidden>
+          <input type="text" value="<%= weather.coords.lon %>" name="long" hidden>
+          <button
+            class="bg-primary hover:bg-secondary border cursor-pointer border-gray-300 text-black px-6 py-3 font-medium gap-2 transition-all duration-200 hover:shadow-md whitespace-nowrap rounded-lg w-full flex items-center justify-center">
             <i class="fas fa-plus"></i>
             <span>Add <%= weather.name %></span>
-            </button>
-          </form>
-          <ul class="favorites-list mb-6 list-none">
-            <% if (favorites.length > 0) { %>
-              <% const maxToShow = 5; %>
-              <% favorites.slice(0, maxToShow).forEach(city => { %>
-                <li class="favorite-item flex items-center justify-between border-b border-gray-200 py-4 transition-all duration-200 last:border-0 hover:bg-gray-50">
-                  <div class="favorite-info flex flex-col gap-1">
-                    <span class="favorite-name font-medium"><%= city.name %></span>
-                  </div>
-                  <div class="favorite-actions flex gap-2">
-                    <form action="/api/delete/fav?_method=DELETE" method="POST">
-                      <input type="text" value="<%= city._id %>" name="id" hidden>
-                      <button class="hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:text-white" title="Remove">
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </form>
-                  </div>
-                </li>
-              <% }) %>
-          
-              <% if (favorites.length > maxToShow) { %>
-                <li class="text-gray-500 text-center py-2 italic">+<%= favorites.length - maxToShow %> more cities</li>
-              <% } %>
-              
-            <% } else { %>
-              <li class="text-gray-500 italic py-4 text-center">No favorite cities yet.</li>
-            <% } %>
-          </ul>
-          <div class="flex items-center justify-center">
-            <a href="/favorites">View Your Favorites</a>
-          </div>
+          </button>
+        </form>
+        <% } else { %>
+        <div class="bg-gray-100 text-gray-500 px-4 py-3 rounded-lg text-center">
+          <i class="fas fa-heart mr-2 text-red-500"></i>Already in favorites!
+        </div>
+        <% } %>
+        <ul class="favorites-list mb-6 list-none">
+          <% if (favorites.length > 0) { %>
+          <% const maxToShow = 5; %>
+          <% favorites.slice(0, maxToShow).forEach(city => { %>
+          <a href="/weather?city=<%=encodeURIComponent(city.name)%>&lat=<%= city.latitude%>&lon=<%=city.longitude %>"
+            class="favorite-item flex items-center justify-between border-b border-gray-200 py-4 transition-all duration-200 last:border-0 hover:bg-gray-50 p-4">
+            <div class="favorite-info flex flex-col gap-1">
+              <span class="favorite-name font-medium"><%= city.name %></span>
+            </div>
+            <div class="favorite-actions flex gap-2">
+              <p class="flex items-center justify-center rounded-full text-gray-400 transition-colors duration-200 hover:text-black"
+                title="Remove">
+                <i class="fa-solid fa-arrow-right"></i>
+              </p>
+            </div>
+          </a>
+          <% }) %>
 
-        </aside>
-      </main>
-    </div>
+          <% if (favorites.length > maxToShow) { %>
+          <li class="text-gray-500 text-center py-2 italic">+<%= favorites.length - maxToShow %> more cities</li>
+          <% } %>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-  </body>
-  <script>
-    const searchInput = document.querySelector('.search-input');
-    const dropdown = document.createElement('ul');
-    dropdown.className = 'autocomplete-dropdown absolute left-0 right-0 top-full z-50 bg-white border border-gray-200 rounded-md shadow-lg mt-2 max-h-60 overflow-y-auto';
-    dropdown.style.display = 'none';
-    searchInput.parentElement.appendChild(dropdown);
-  
-    let timeout;
-    let lastResults = [];
-    let lastQuery = '';
-  
-    function renderDropdown(cities, query) {
-      dropdown.innerHTML = '';
-      lastResults = cities;
-      lastQuery = query;
-  
-      if (cities.length === 0) {
-        const noResults = document.createElement('div');
-        noResults.className = 'px-4 py-2 text-gray-500';
-        noResults.textContent = 'No locations found';
-        dropdown.appendChild(noResults);
-      } else {
-        cities.forEach(city => {
-          const item = document.createElement('li');
-          item.className = 'hover:bg-gray-50 transition-colors';
-  
-          const link = document.createElement('a');
-          link.href = `/weather?city=${encodeURIComponent(city.name)}&lat=${city.latitude}&lon=${city.longitude}`;
-          link.className = 'block px-4 py-3 no-underline text-gray-800 hover:text-primary';
-  
-          const displayName = `${city.name}, ${city.region}, ${city.country}`;
-          if (query.length > 0) {
-            const regex = new RegExp(query, 'gi');
-            link.innerHTML = displayName.replace(regex, match => `<span class="font-semibold text-primary">${match}</span>`);
-          } else {
-            link.textContent = displayName;
-          }
-  
-          item.appendChild(link);
-          dropdown.appendChild(item);
-        });
-      }
-  
-      dropdown.style.display = cities.length > 0 ? 'block' : 'none';
-    }
-  
-    function fetchSuggestions(query) {
-      clearTimeout(timeout);
-      if (query === lastQuery && lastResults.length > 0) {
-        renderDropdown(lastResults, query);
-        return;
-      }
-  
-      timeout = setTimeout(async () => {
-        try {
-          const response = await fetch(`/api/autocomplete?q=${encodeURIComponent(query)}`);
-          const result = await response.json();
-          const cities = result.data || [];
-          renderDropdown(cities, query);
-        } catch (err) {
-          console.error('Autocomplete fetch failed:', err);
-          dropdown.style.display = 'none';
+          <% } else { %>
+          <li class="text-gray-500 italic py-4 text-center">No favorite cities yet.</li>
+          <% } %>
+        </ul>
+        <div class="flex items-center justify-center">
+          <a href="/favorites">View Your Favorites</a>
+        </div>
+
+      </aside>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+<script>
+  const searchInput = document.querySelector('.search-input');
+  const dropdown = document.createElement('ul');
+  dropdown.className =
+    'autocomplete-dropdown absolute left-0 right-0 top-full z-50 bg-white border border-gray-200 rounded-md shadow-lg mt-2 max-h-60 overflow-y-auto';
+  dropdown.style.display = 'none';
+  searchInput.parentElement.appendChild(dropdown);
+
+  let timeout;
+  let lastResults = [];
+  let lastQuery = '';
+
+  function renderDropdown(cities, query) {
+    dropdown.innerHTML = '';
+    lastResults = cities;
+    lastQuery = query;
+
+    if (cities.length === 0) {
+      const noResults = document.createElement('div');
+      noResults.className = 'px-4 py-2 text-gray-500';
+      noResults.textContent = 'No locations found';
+      dropdown.appendChild(noResults);
+    } else {
+      cities.forEach(city => {
+        const item = document.createElement('li');
+        item.className = 'hover:bg-gray-50 transition-colors';
+
+        const link = document.createElement('a');
+        link.href = `/weather?city=${encodeURIComponent(city.name)}&lat=${city.latitude}&lon=${city.longitude}`;
+        link.className = 'block px-4 py-3 no-underline text-gray-800 hover:text-primary';
+
+        const displayName = `${city.name}, ${city.region}, ${city.country}`;
+        if (query.length > 0) {
+          const regex = new RegExp(query, 'gi');
+          link.innerHTML = displayName.replace(regex, match =>
+            `<span class="font-semibold text-primary">${match}</span>`);
+        } else {
+          link.textContent = displayName;
         }
-      }, 100);
+
+        item.appendChild(link);
+        dropdown.appendChild(item);
+      });
     }
-  
-    searchInput.addEventListener('input', (e) => {
-      const query = e.target.value.trim();
-      if (query.length < 2) {
+
+    dropdown.style.display = cities.length > 0 ? 'block' : 'none';
+  }
+
+  function fetchSuggestions(query) {
+    clearTimeout(timeout);
+    if (query === lastQuery && lastResults.length > 0) {
+      renderDropdown(lastResults, query);
+      return;
+    }
+
+    timeout = setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/autocomplete?q=${encodeURIComponent(query)}`);
+        const result = await response.json();
+        const cities = result.data || [];
+        renderDropdown(cities, query);
+      } catch (err) {
+        console.error('Autocomplete fetch failed:', err);
         dropdown.style.display = 'none';
-        return;
       }
-      fetchSuggestions(query);
-    });
-  
-    searchInput.addEventListener('focus', () => {
-      const query = searchInput.value.trim();
-      if (query.length >= 2 && lastResults.length > 0) {
-        renderDropdown(lastResults, query);
-      }
-    });
-  
-    document.addEventListener('click', (e) => {
-      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.style.display = 'none';
-      }
-    });
-  
-    searchInput.addEventListener('click', (e) => {
-      const query = searchInput.value.trim();
-      if (query.length >= 2 && lastResults.length > 0) {
-        dropdown.style.display = 'block';
-      }
-    });
-  </script>
-  
-  <style>
-    .autocomplete-dropdown {
-      scrollbar-width: thin;
-      scrollbar-color: #c1c1c1 #f1f1f1;
+    }, 100);
+  }
+
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.trim();
+    if (query.length < 2) {
+      dropdown.style.display = 'none';
+      return;
     }
-    .autocomplete-dropdown::-webkit-scrollbar {
-      width: 8px;
+    fetchSuggestions(query);
+  });
+
+  searchInput.addEventListener('focus', () => {
+    const query = searchInput.value.trim();
+    if (query.length >= 2 && lastResults.length > 0) {
+      renderDropdown(lastResults, query);
     }
-    .autocomplete-dropdown::-webkit-scrollbar-thumb {
-      background-color: #c1c1c1;
-      border-radius: 4px;
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.style.display = 'none';
     }
-    .autocomplete-dropdown::-webkit-scrollbar-track {
-      background-color: #f1f1f1;
-      border-radius: 4px;
+  });
+
+  searchInput.addEventListener('click', (e) => {
+    const query = searchInput.value.trim();
+    if (query.length >= 2 && lastResults.length > 0) {
+      dropdown.style.display = 'block';
     }
-  </style>
+  });
+</script>
+
 </html>

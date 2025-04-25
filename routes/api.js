@@ -114,16 +114,12 @@ router.delete('/delete/fav', async (req, res) => {
     }
 
     await City.findByIdAndDelete(id)
-
-    res.status(200).json({
-      message: 'City deleted successfully.',
-      city
-    })
+    req.flash('success', 'City deleted successfully.');
+    res.redirect('/favorites');
   } catch (err) {
     console.error('Error deleting city:', err)
-    res.status(500).json({
-      error: 'Something went wrong on the server.'
-    })
+    req.flash('error', 'Something went wrong.');
+    res.redirect('/favorites');
   }
 })
 

@@ -1,109 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeatherSphere - Favorites</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App - Favorites</title>
+  <link rel="stylesheet" href="output.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/82eb69e53c.js" crossorigin="anonymous"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    @keyframes slide-in {
+      from {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .animate-slide-in {
+      animation: slide-in 0.4s ease-out;
+    }
+  </style>
 </head>
-<body class="min-h-screen">
-    <div class="container mx-auto max-w-[1400px] px-4 py-8">
-        <header class="flex justify-between items-center mb-8 flex-wrap gap-4">
-            <div class="logo flex items-center gap-2 text-2xl font-bold text-primary">
-                <i class="fas fa-cloud-sun-rain text-3xl"></i>
-                <span>Weather App</span>
-            </div>
-            <nav class="flex items-center gap-6">
-                <a href="/" class="text-gray-700 hover:text-primary transition-colors">
-                    <i class="fas fa-home mr-1"></i> Home
-                </a>
-        </header>
 
-        <main>
-            <div class="bg-white rounded-xl shadow-md p-8">
-                <div class="flex justify-between items-center mb-8">
-                    <h1 class="text-3xl font-bold text-gray-800">
-                        <i class="fas fa-heart text-primary mr-3"></i>
-                        Your Favorite Locations
-                    </h1>
-                </div>
+<body class="font-inter min-h-screen bg-gradient-to-br from-[#f5f7fa] to-[#c3cfe2] text-gray-900">
+  <% if (messages.success) { %>
+  <div id="flashMessage"
+    class="fixed top-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg animate-slide-in">
+    <%= messages.success %>
+  </div>
+  <% } %>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="favoritesContainer">
-                    <% if (favorites.length > 0) { %>
-                        <% favorites.forEach(fav => { %>
-                          <div class="favorite-card bg-gray-50 rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-300">
-                            <div class="flex justify-between items-start mb-4">
-                              <div>
-                                <h2 class="text-xl font-bold text-gray-800"><%= fav.name %>, <%= fav.country %></h2>
-                                <div class="text-gray-500 text-sm">Updated just now</div>
-                              </div>
-                              <form action="/remove-favorite" method="POST">
-                                <input type="hidden" name="city" value="<%= fav.name %>">
-                                <button type="submit" class="text-red-400 hover:text-red-600 transition-colors" title="Remove favorite">
-                                  <i class="fas fa-trash-alt"></i>
-                                </button>
-                              </form>
-                            </div>
-                      
-                            <div class="flex items-center justify-between mb-4">
-                              <div class="flex items-center">
-                                <i class="fas fa-sun text-4xl text-yellow-400 mr-4"></i>
-                                <div>
-                                  <div class="text-3xl font-bold"><%= fav.temp %>°C</div>
-                                  <div class="text-gray-500 capitalize"><%= fav.description %></div>
-                                </div>
-                              </div>
-                              <a href="/weather?city=<%=encodeURIComponent(fav.name)%>&lat=<%= fav.coords.lat%>&lon=<%=fav.coords.lon %>" class="bg-primary hover:bg-secondary text-[#0059ff] px-4 py-2 rounded-lg transition-colors">
-                                View Details
-                              </a>
-                            </div>
-                      
-                            <div class="grid grid-cols-3 gap-2 text-sm">
-                              <div class="bg-white p-2 rounded text-center">
-                                <div class="text-gray-500">Humidity</div>
-                                <div class="font-semibold"><%= fav.humidity %>%</div>
-                              </div>
-                              <div class="bg-white p-2 rounded text-center">
-                                <div class="text-gray-500">Wind</div>
-                                <div class="font-semibold"><%= fav.wind %> mph</div>
-                              </div>
-                              <div class="bg-white p-2 rounded text-center">
-                                <div class="text-gray-500">Precip</div>
-                                <div class="font-semibold"><%= fav.precip %> mm</div>
-                              </div>
-                            </div>
-                          </div>
-                        <% }) %>
-                      <% } else { %>
-                        <div id="emptyState" class="text-center py-12">
-                          <i class="fas fa-heart text-4xl text-gray-300 mb-4"></i>
-                          <h3 class="text-xl font-medium text-gray-500 mb-2">No favorites yet</h3>
-                          <p class="text-gray-400 mb-4">Save your favorite locations to see them here</p>
-                          <a href="/dashboard" class="inline-block bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg transition-colors">
-                            <i class="fas fa-search mr-2"></i> Browse Locations
-                          </a>
-                        </div>
-                      <% } %>
-                </div>
- 
-                <div id="emptyState" class="text-center py-12 hidden">
-                    <i class="fas fa-heart text-4xl text-gray-300 mb-4"></i>
-                    <h3 class="text-xl font-medium text-gray-500 mb-2">No favorites yet</h3>
-                    <p class="text-gray-400 mb-4">Save your favorite locations to see them here</p>
-                    <a href="/dashboard" class="inline-block bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-search mr-2"></i> Browse Locations
-                    </a>
-                </div>
+  <% if (messages.error) { %>
+  <div id="flashMessage"
+    class="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg animate-slide-in">
+    <%= messages.error %>
+  </div>
+  <% } %>
+  <div class="container mx-auto max-w-[1400px] px-8 py-8">
+    <%- include('partials/navbar', { showSearch: false }) %>
+
+    <main>
+      <div class="bg-white rounded-xl shadow-md p-8">
+        <div class="flex justify-between items-center mb-8">
+          <h1 class="text-3xl font-bold text-gray-800">
+            <i class="fas fa-heart text-primary mr-3"></i>
+            Your Favorite Locations
+          </h1>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="favoritesContainer">
+          <% if (favorites.length > 0) { %>
+          <% favorites.forEach(fav => { %>
+          <div
+            class="favorite-card bg-gray-50 rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-300">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h2 class="text-xl font-bold text-gray-800"><%= fav.name %>, <%= fav.country %></h2>
+                <div class="text-gray-500 text-sm">Updated just now</div>
+              </div>
+              <form action="/api/delete/fav?_method=DELETE" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="text" value="<%= fav._id %>" name="id" hidden>
+                <button type="submit" class="text-red-400 hover:text-red-600 transition-colors" title="Remove favorite">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </form>
             </div>
-        </main>
-    </div>
+
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center">
+                <i class="fas fa-sun text-4xl text-yellow-400 mr-4"></i>
+                <div>
+                  <div class="text-3xl font-bold"><%= fav.temp %>°C</div>
+                  <div class="text-gray-500 capitalize"><%= fav.description %></div>
+                </div>
+              </div>
+              <a href="/weather?city=<%=encodeURIComponent(fav.name)%>&lat=<%= fav.coords.lat%>&lon=<%=fav.coords.lon %>"
+                class="bg-primary hover:bg-secondary text-[#0059ff] px-4 py-2 rounded-lg transition-colors">
+                View Details
+              </a>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-sm">
+              <div class="bg-white p-2 rounded text-center">
+                <div class="text-gray-500">Humidity</div>
+                <div class="font-semibold"><%= fav.humidity %>%</div>
+              </div>
+              <div class="bg-white p-2 rounded text-center">
+                <div class="text-gray-500">Wind</div>
+                <div class="font-semibold"><%= fav.wind %> mph</div>
+              </div>
+              <div class="bg-white p-2 rounded text-center">
+                <div class="text-gray-500">Precip</div>
+                <div class="font-semibold"><%= fav.precip %> mm</div>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+          <% } else { %>
+          <div id="emptyState" class="text-center py-12">
+            <i class="fas fa-heart text-4xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-medium text-gray-500 mb-2">No favorites yet</h3>
+            <p class="text-gray-400 mb-4">Save your favorite locations to see them here</p>
+            <a href="/dashboard"
+              class="inline-block bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg transition-colors">
+              <i class="fas fa-search mr-2"></i> Browse Locations
+            </a>
+          </div>
+          <% } %>
+        </div>
+
+        <div id="emptyState" class="text-center py-12 hidden">
+          <i class="fas fa-heart text-4xl text-gray-300 mb-4"></i>
+          <h3 class="text-xl font-medium text-gray-500 mb-2">No favorites yet</h3>
+          <p class="text-gray-400 mb-4">Save your favorite locations to see them here</p>
+          <a href="/dashboard"
+            class="inline-block bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg transition-colors">
+            <i class="fas fa-search mr-2"></i> Browse Locations
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
 </body>
+<script>
+  setTimeout(() => {
+    const flash = document.getElementById('flashMessage');
+    if (flash) flash.remove();
+  }, 3000);
+</script>
+
 </html>

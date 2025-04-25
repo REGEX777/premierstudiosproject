@@ -1,0 +1,24 @@
+<header class="mb-8 flex flex-wrap items-center justify-between gap-4">
+    <div class="logo text-primary flex items-center gap-2 text-2xl font-bold">
+        <i class="fas fa-cloud-sun-rain text-3xl"></i>
+        <span>Weather App</span>
+    </div>
+
+    <% if (showSearch) { %>
+    <div class="search-container relative w-full max-w-[500px] min-w-[250px]">
+        <i class="fas fa-search search-icon text-primary absolute top-1/2 left-4 -translate-y-1/2"></i>
+        <input id="searchInput" type="text"
+            class="search-input rounded-custom shadow-custom w-full border-2 rounded-lg py-3 pr-4 pl-12 text-base transition-all duration-300 focus:shadow-[0_4px_20px_rgba(67,97,238,0.3)] focus:outline-none"
+            placeholder="Search for a city or location..." autocomplete="off" />
+        <ul id="suggestions"
+            class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md mt-2 z-10 shadow-lg max-h-60 overflow-y-auto hidden">
+        </ul>
+    </div>
+    <% } else { %>
+    <nav class="flex items-center gap-6">
+        <a href="/" class="text-gray-700 hover:text-primary transition-colors">
+            <i class="fas fa-home mr-1"></i> Home
+        </a>
+    </nav>
+    <% } %>
+</header>

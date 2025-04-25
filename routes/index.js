@@ -87,7 +87,7 @@ router.get('/', async (req, res) => {
 
         await redisClient.set(redisKey, JSON.stringify({ weather, forecast }), { EX: 900 });
     
-        res.render('index', { weather, forecast, favorites: await City.find() });
+        res.render('index', { weather, forecast, favorites: await City.find(), csrfToken: req.csrfToken() });
     
       } catch (err) {
         console.error('Weather API error:', err.response?.data || err.message);

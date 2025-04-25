@@ -18,7 +18,6 @@ router.get('/', async (req, res) => {
         const redisKey = `weather:${cityName.toLowerCase()}`;
   
         let cached = await redisClient.get(redisKey);
-  
         if (!cached) {
           const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${cityName}&days=1&aqi=yes`;
           const { data } = await axios.get(url);
@@ -40,6 +39,7 @@ router.get('/', async (req, res) => {
               lon: city.longitude,
               lat: city.latitude,
             },
+            _id: city._id,
             aqi
           };
   
@@ -52,12 +52,12 @@ router.get('/', async (req, res) => {
             lon: city.longitude,
             lat: city.latitude
           };
+          parsed._id = city._id
   
           weatherData.push(parsed);
         }
       }
-      console.log(weatherData)
-      res.render('favorite', { favorites: weatherData });
+      res.render('favorite', { favorites: weatherData, csrfToken: req.csrfToken()  });
     } catch (err) {
       console.error('Error in /favorite:', err.message);
       res.render('favorite', { favorites: [], error: 'Could not load favorites' });
