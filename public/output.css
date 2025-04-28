@@ -581,8 +581,35 @@
   .whitespace-nowrap {
     white-space: nowrap;
   }
+  .text-\[\#3b3b3b\] {
+    color: #3b3b3b;
+  }
+  .text-\[\#00008B\] {
+    color: #00008B;
+  }
   .text-\[\#0059ff\] {
     color: #0059ff;
+  }
+  .text-\[\#808080\] {
+    color: #808080;
+  }
+  .text-\[\#ADD8E6\] {
+    color: #ADD8E6;
+  }
+  .text-\[\#D3D3D3\] {
+    color: #D3D3D3;
+  }
+  .text-\[\#FFFFE0\] {
+    color: #FFFFE0;
+  }
+  .text-\[\#a0a000\] {
+    color: #a0a000;
+  }
+  .text-\[\#e2e203\] {
+    color: #e2e203;
+  }
+  .text-\[\#ffff31\] {
+    color: #ffff31;
   }
   .text-black {
     color: var(--color-black);

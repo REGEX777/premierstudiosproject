@@ -104,28 +104,28 @@
           <div class="weather-details mb-12 grid w-full grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-5">
             <div
               class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
-              <i class="fas fa-tint text-primary mb-3 text-2xl"></i>
+              <i class="fas fa-tint text-primary mb-3 text-2xl text-[#ADD8E6]"></i>
               <div class="detail-value mb-1 text-xl font-semibold"><%= weather.main.humidity %>%</div>
               <div class="detail-label text-sm text-gray-600">Humidity</div>
             </div>
 
             <div
               class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
-              <i class="fas fa-wind text-primary mb-3 text-2xl"></i>
+              <i class="fas fa-wind text-primary mb-3 text-2xl text-[#808080]"></i>
               <div class="detail-value mb-1 text-xl font-semibold"><%= Math.round(weather.wind.speed, 2) %> m/s</div>
               <div class="detail-label text-sm text-gray-600">Wind Speed</div>
             </div>
 
             <div
               class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
-              <i class="fas fa-compress-arrows-alt text-primary mb-3 text-2xl"></i>
+              <i class="fas fa-compress-arrows-alt text-primary mb-3 text-2xl text-[#00008B]"></i>
               <div class="detail-value mb-1 text-xl font-semibold"><%= weather.main.pressure %> hPa</div>
               <div class="detail-label text-sm text-gray-600">Pressure</div>
             </div>
 
             <div
               class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
-              <i class="fas fa-eye text-primary mb-3 text-2xl"></i>
+              <i class="fas fa-eye text-primary mb-3 text-2xl text-[#3b3b3b]"></i>
               <div class="detail-value mb-1 text-xl font-semibold"><%= (weather.visibility / 1000).toFixed(1) %> km
               </div>
               <div class="detail-label text-sm text-gray-600">Visibility</div>
@@ -133,7 +133,7 @@
 
             <div
               class="detail-card rounded-custom bg-gray-50 px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1">
-              <i class="fas fa-cloud-rain text-primary mb-3 text-2xl"></i>
+              <i class="fas fa-cloud-rain text-primary mb-3 text-2xl text-[#D3D3D3]"></i>
               <div class="detail-value mb-1 text-xl font-semibold">
                 <%= weather.rain && weather.rain["1h"] ? `${weather.rain["1h"]} mm` : '0 mm' %>
               </div>
