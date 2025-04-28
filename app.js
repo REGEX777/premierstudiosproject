@@ -7,14 +7,17 @@ import session from 'express-session';
 import flash from 'express-flash';
 import csrf from 'csurf';
 import rateLimit from 'express-rate-limit';
-import helmet from 'helmet';
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log("Data connect hoe gaya sir jee lesfucking goooo");
     })
     .catch(err => console.log(err));
-
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 100, 
+  message: 'Too many requests, please try again later.'
+});
 const app = express()
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -29,23 +32,21 @@ app.use(express.urlencoded({
 }))
 app.use(methodOverride('_method'));
 app.use(csrf());
-app.use(helmet());
+app.use(limiter);
 
 import indexRoute from './routes/index.js'
 import apiRoute from './routes/api.js'
 import favoriteRoute from './routes/favorite.js'
 
 app.use('/', indexRoute);
-app.use('/api', rateLimit({ windowMs: 15*60*1000, max: 100 }));
 app.use('/api', apiRoute)
 app.use('/weather', indexRoute)
 app.use('/favorites', favoriteRoute)
 
-
-// app.get('/', (req, res)=>{
-//     res.render('index')
-// })
-
+app.use((req, res, next) => {
+    res.status(404);
+    res.render('404', { url: req.originalUrl });
+});
 app.listen(3000, ()=>{
     console.log("App started on port 3000")
 })

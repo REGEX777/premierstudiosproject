@@ -3,7 +3,7 @@ import {
 } from 'ejs';
 import express from 'express';
 import mongoose from 'mongoose';
-
+import sanitizeHtml from 'sanitize-html';
 
 
 import City from '../models/favoriteCity.js';
@@ -38,58 +38,52 @@ router.get('/autocomplete', async (req, res) => {
 
 router.post('/add/fav', async (req, res) => {
   try {
-    const {
-      cityName,
-      lat,
-      long
-    } = req.body;
+    const { cityName, lat, long } = req.body;
 
     if (!cityName || !lat || !long) {
-      return res.status(400).json({
-        error: 'All fields are required.'
-      });
+      return res.status(400).json({ error: 'All fields are required.' });
+    }
+
+    const cleanCityName = sanitizeHtml(cityName, {
+      allowedTags: [],
+      allowedAttributes: {}
+    }).trim();
+
+    const cityNameRegex = /^[a-zA-ZÀ-ÿ\s\-']{1,100}$/;
+    if (!cityNameRegex.test(cleanCityName)) {
+      return res.status(400).json({ error: 'Invalid city name format.' });
     }
 
     const latitude = parseFloat(lat);
     const longitude = parseFloat(long);
 
     if (isNaN(latitude) || isNaN(longitude)) {
-      return res.status(400).json({
-        error: 'Coordinates must be numbers.'
-      });
+      return res.status(400).json({ error: 'Coordinates must be numbers.' });
     }
 
     if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
-      return res.status(400).json({
-        error: 'Coordinates out of valid range.'
-      });
+      return res.status(400).json({ error: 'Coordinates out of valid range.' });
     }
 
-    const existing = await City.findOne({
-      name: cityName
-    });
+    const existing = await City.findOne({ name: cleanCityName });
     if (existing) {
-      return res.status(409).json({
-        error: 'City already exists in favorites.'
-      });
+      return res.status(409).json({ error: 'City already exists in favorites.' });
     }
 
     const newCity = new City({
-      name: cityName,
+      name: cleanCityName,
       latitude,
       longitude
     });
 
     await newCity.save();
-    res.status(201).json({
-      message: 'City saved successfully!'
-    });
+    req.flash('success', 'City saved successfully!');
+    res.redirect(`/weather?city=${cityName}&lat=${lat}&lon=${long}`);
 
   } catch (error) {
     console.error('Error saving city:', error);
-    res.status(500).json({
-      error: 'Internal server error.'
-    });
+    req.flash('error', 'Internal server error.');
+    res.redirect(`/weather?city=${cityName}&lat=${lat}&lon=${long}`);
   }
 });
 

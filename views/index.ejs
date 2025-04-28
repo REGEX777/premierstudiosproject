@@ -4,8 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weather App</title>
-  <link rel="stylesheet" href="output.css">
+  <title><%= weather.name %> Weather</title>
+  <link rel="stylesheet" href="/output.css">
+  <link rel="icon" href="https://cdn.weatherapi.com/weather/128x128/day/<%= weather.weather[0].icon %>.png" type="image/png" id="dynamic-favicon">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://kit.fontawesome.com/82eb69e53c.js" crossorigin="anonymous"></script>
 
@@ -28,10 +29,43 @@
       background-color: #f1f1f1;
       border-radius: 4px;
     }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    @keyframes slide-in {
+      from {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .animate-slide-in {
+      animation: slide-in 0.4s ease-out;
+    }
   </style>
 </head>
 
 <body class="font-inter min-h-screen bg-gradient-to-br from-[#f5f7fa] to-[#c3cfe2] text-gray-900">
+    <% if (messages.success) { %>
+  <div id="flashMessage"
+    class="fixed top-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg animate-slide-in">
+    <%= messages.success %>
+  </div>
+  <% } %>
+
+  <% if (messages.error) { %>
+  <div id="flashMessage"
+    class="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg animate-slide-in">
+    <%= messages.error %>
+  </div>
+  <% } %>
   <!-- nav -->
   <div class="container mx-auto max-w-[1400px] px-8 py-8">
     <%- include('partials/navbar', { showSearch: true }) %>
@@ -238,14 +272,13 @@
           <% } %>
         </ul>
         <div class="flex items-center justify-center">
-          <a href="/favorites">View Your Favorites</a>
+          <a class="text-[#0059ff]" href="/favorites">View Your Favorites</a>
         </div>
 
       </aside>
     </main>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 </body>
 <script>
   const searchInput = document.querySelector('.search-input');
@@ -343,6 +376,25 @@
       dropdown.style.display = 'block';
     }
   });
+  setTimeout(() => {
+    const flash = document.getElementById('flashMessage');
+    if (flash) flash.remove();
+  }, 3000);
+
+  document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('searchInput');
+
+  searchInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+
+      const city = searchInput.value.trim();
+      if (city) {
+        window.location.href = `/weather/?city=${encodeURIComponent(city)}`;
+      }
+    }
+  });
+});
 </script>
 
 </html>
